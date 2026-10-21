@@ -1,0 +1,2 @@
+import { BarChart3, Database, LayoutDashboard, Settings, ShieldCheck, Users } from 'lucide-react';
+export default function AdminSidebar(){return <aside className="admin-sidebar"><div className="admin-badge"><ShieldCheck/> ADMIN CONSOLE</div><a className="active"><LayoutDashboard/> Overview</a><a><BarChart3/> Analytics</a><a><Database/> Elections</a><a><Users/> Voters</a><a><Settings/> Settings</a></aside>}

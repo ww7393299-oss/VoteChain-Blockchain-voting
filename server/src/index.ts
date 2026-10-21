@@ -1,0 +1,10 @@
+import express from 'express';
+import cors from 'cors';
+import { electionsRouter } from './routes/elections';
+import { votingRouter } from './routes/voting';
+import { adminRouter } from './routes/admin';
+const app=express(); app.use(cors()); app.use(express.json());
+app.get('/api/health',(_,res)=>res.json({success:true,data:{status:'ok',mode:'demo',version:'2.0'}}));
+app.use('/api/elections',electionsRouter); app.use('/api/voting',votingRouter); app.use('/api/admin',adminRouter);
+app.use((_,res)=>res.status(404).json({success:false,message:'Route not found'}));
+app.listen(Number(process.env.PORT||4000),()=>console.log('VoteChain API running on :4000'));

@@ -1,0 +1,11 @@
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
+enum Role { CUSTOMER ADMIN SUPER_ADMIN }
+model User { id String @id @default(cuid()) name String email String @unique passwordHash String? role Role @default(CUSTOMER) walletAddress String? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt eligibilities VoterEligibility[] auditLogs AuditLog[] }
+model Organization { id String @id @default(cuid()) name String elections Election[] }
+model Election { id String @id @default(cuid()) title String description String status String startAt DateTime endAt DateTime network String contractAddress String? organizationId String organization Organization @relation(fields:[organizationId],references:[id]) candidates Candidate[] eligibilities VoterEligibility[] transactions BlockchainTransaction[] auditLogs AuditLog[] results ElectionResult[] createdAt DateTime @default(now()) }
+model Candidate { id String @id @default(cuid()) electionId String election Election @relation(fields:[electionId],references:[id],onDelete:Cascade) name String position String bio String manifesto String }
+model VoterEligibility { id String @id @default(cuid()) userId String user User @relation(fields:[userId],references:[id],onDelete:Cascade) electionId String election Election @relation(fields:[electionId],references:[id],onDelete:Cascade) status String createdAt DateTime @default(now()) @@unique([userId,electionId]) }
+model BlockchainTransaction { id String @id @default(cuid()) electionId String election Election @relation(fields:[electionId],references:[id],onDelete:Cascade) hash String @unique blockNumber BigInt? network String status String createdAt DateTime @default(now()) }
+model AuditLog { id String @id @default(cuid()) userId String? user User? @relation(fields:[userId],references:[id]) electionId String? election Election? @relation(fields:[electionId],references:[id]) event String actorRole String? transactionHash String? metadata Json? createdAt DateTime @default(now()) }
+model ElectionResult { id String @id @default(cuid()) electionId String election Election @relation(fields:[electionId],references:[id],onDelete:Cascade) candidateId String voteCount Int publishedAt DateTime? }
